@@ -138,4 +138,19 @@ public class PlayerRestController {
 
         return services.updatePlayer(params, id);
     }
+
+    @GetMapping("/count")
+    public Long getCount(String name,
+                            String title,
+                            Race race,
+                            Profession profession,
+                            Long after,
+                            Long before,
+                            Boolean banned,
+                            Integer minExperience,
+                            Integer maxExperience,
+                            Integer minLevel,
+                            Integer maxLevel) {
+        return services.getCount(name, title, race, profession, after, before, banned, minExperience, maxExperience, minLevel, maxLevel);
+    }
 }

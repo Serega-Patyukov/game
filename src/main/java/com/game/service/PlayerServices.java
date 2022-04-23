@@ -2,12 +2,16 @@ package com.game.service;
 
 import com.game.entity.Data;
 import com.game.entity.Player;
+import com.game.entity.Profession;
+import com.game.entity.Race;
 import com.game.exceptions.ExceptionsNOT_FOUND;
 import com.game.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @Service
 public class PlayerServices {
@@ -55,7 +59,6 @@ public class PlayerServices {
         return players;
     }
 
-
     public Player updatePlayer(Data params, Long id) {
         Player player = repository.findById(id).orElseThrow(() -> new ExceptionsNOT_FOUND());
 
@@ -77,5 +80,40 @@ public class PlayerServices {
         if (params.getBanned() != null) player.setBanned(params.getBanned());
 
         return repository.save(player);
+    }
+
+    public long getCount(String name,
+                         String title,
+                         Race race,
+                         Profession profession,
+                         Long after,
+                         Long before,
+                         Boolean banned,
+                         Integer minExperience,
+                         Integer maxExperience,
+                         Integer minLevel,
+                         Integer maxLevel) {
+
+        if (repository.count() == 0) return 0L;
+
+        Stream<Player> playerStream = ((List<Player>) repository.findAll()).stream().filter(new Predicate<Player>() {
+            @Override
+            public boolean test(Player player) {
+                if (name != null) if (player.getName().indexOf(name) < 0) return false;
+                if (title != null) if (player.getTitle().indexOf(title) < 0) return false;
+                if (race != null) if (!player.getRace().toString().equals(race.toString())) return false;
+                if (profession != null) if (!player.getProfession().toString().equals(profession.toString())) return false;
+                if (after != null) if (player.getBirthday().getTime() < after) return false;
+                if (before != null) if (player.getBirthday().getTime() > before) return false;
+                if (banned != null) if (!(player.getBanned().equals(banned))) return false;
+                if (minExperience != null) if (player.getExperience() < minExperience) return false;
+                if (maxExperience != null) if (player.getExperience() > maxExperience) return false;
+                if (minLevel != null) if (player.getLevel() < minLevel) return false;
+                if (maxLevel != null) if (player.getLevel() > maxLevel) return false;
+                return true;
+            }
+        });
+
+        return playerStream.count();
     }
 }
