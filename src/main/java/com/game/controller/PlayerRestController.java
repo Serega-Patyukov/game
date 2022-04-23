@@ -87,4 +87,55 @@ public class PlayerRestController {
     public List<Player> getAllWithoutFilters(){
         return services.getAllWithoutFilters();
     }
+
+    @PostMapping("/{id}")
+    public Player updatePlayer(@RequestBody Data params, @PathVariable Long id) {
+        if (id < 1) throw  new ExceptionsBAD_REQUEST();
+
+        //  длина значения параметра “name” или “title” превышает размер соответствующего поля в БД (12 и 30 символов);
+        //  значение параметра “name” пустая строка;
+        if (params.getName() != null) {
+            if ( (params.getName().length() > 12) || params.getName().equals("") ) throw  new ExceptionsBAD_REQUEST();
+        }
+        if (params.getTitle() != null) {
+            if (params.getTitle().length() > 30) throw  new ExceptionsBAD_REQUEST();
+        }
+
+        //  “birthday”:[Long] < 0;
+        if (params.getBirthday() != null) {
+            if (params.getBirthday().getTime() < 0) throw  new ExceptionsBAD_REQUEST();
+        }
+
+        //  опыт находится вне заданных пределов;
+        if (params.getExperience() != null) {
+            if (!(params.getExperience() >= 0 && params.getExperience() <= 10_000_000)) throw  new ExceptionsBAD_REQUEST();
+        }
+
+        //  дата регистрации находятся вне заданных пределов.
+        if (params.getBirthday() != null) {
+            Date date0 = new Date(100, 0, 1);
+            Date date1 = new Date(1100, 0, 1);
+            if (!(params.getBirthday().getYear() >= date0.getYear() && params.getBirthday().getYear() <= date1.getYear())) throw  new ExceptionsBAD_REQUEST();
+        }
+
+        // Проверяем рассу.
+        if (params.getRace() != null) {
+            Race[] races = Race.values();
+            for (int i = 0; i < races.length; i++) {
+                if (races[i] == params.getRace()) break;
+                if (i == races.length - 1) throw  new ExceptionsBAD_REQUEST();
+            }
+        }
+
+        // Проверяем профессию.
+        if (params.getProfession() != null) {
+            Profession[] professions = Profession.values();
+            for (int i = 0; i < professions.length; i++) {
+                if (professions[i] == params.getProfession()) break;
+                if (i == professions.length - 1) throw  new ExceptionsBAD_REQUEST();
+            }
+        }
+
+        return services.updatePlayer(params, id);
+    }
 }

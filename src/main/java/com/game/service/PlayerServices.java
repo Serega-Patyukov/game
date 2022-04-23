@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PlayerServices {
@@ -24,6 +23,7 @@ public class PlayerServices {
 
         // Вычисляем уровень персонажа.
         Integer L = (int) (Math.sqrt(2500 + 200 * params.getExperience()) - 50)/100;
+        // Вычисляем остаток опыта до следующего уровня
         Integer N = 50 * (L + 1) * (L + 2) - params.getExperience();
 
         Player player = new Player();
@@ -56,4 +56,26 @@ public class PlayerServices {
     }
 
 
+    public Player updatePlayer(Data params, Long id) {
+        Player player = repository.findById(id).orElseThrow(() -> new ExceptionsNOT_FOUND());
+
+        if (params.getName() != null) player.setName(params.getName());
+        if (params.getTitle() != null) player.setTitle(params.getTitle());
+        if (params.getRace() != null) player.setRace(params.getRace());
+        if (params.getProfession() != null) player.setProfession(params.getProfession());
+        if (params.getExperience() != null) {
+
+            Integer L = (int) (Math.sqrt(2500 + 200 * params.getExperience()) - 50)/100;
+            Integer N = 50 * (L + 1) * (L + 2) - params.getExperience();
+
+            player.setExperience(params.getExperience());
+            player.setLevel(L);
+            player.setUntilNextLevel(N);
+        }
+
+        if (params.getBirthday() != null) player.setBirthday(params.getBirthday());
+        if (params.getBanned() != null) player.setBanned(params.getBanned());
+
+        return repository.save(player);
+    }
 }
