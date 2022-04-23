@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlayerServices {
@@ -44,8 +45,15 @@ public class PlayerServices {
         return repository.findById(id).orElseThrow(() -> new ExceptionsNOT_FOUND());
     }
 
+    public void deletePlayer(Long id) {
+        if (repository.existsById(id)) repository.deleteById(id);
+        else throw new ExceptionsNOT_FOUND();
+    }
+
     public List<Player> getAllWithoutFilters() {
         List<Player> players = (List<Player>) repository.findAll();
         return players;
     }
+
+
 }

@@ -77,6 +77,12 @@ public class PlayerRestController {
         return services.getPlayer(id);
     }
 
+    @DeleteMapping("/{id}")
+    public void deletePlayer(@PathVariable Long id) {
+        if (id < 1) throw  new ExceptionsBAD_REQUEST();
+        services.deletePlayer(id);
+    }
+
     @GetMapping
     public List<Player> getAllWithoutFilters(){
         return services.getAllWithoutFilters();
