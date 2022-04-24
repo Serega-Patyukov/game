@@ -84,8 +84,35 @@ public class PlayerRestController {
     }
 
     @GetMapping
-    public List<Player> getAllWithoutFilters(){
-        return services.getAllWithoutFilters();
+    public List<Player> getAllWithoutFilters(String name,
+                                             String title,
+                                             Race race,
+                                             Profession profession,
+                                             Long after,
+                                             Long before,
+                                             Boolean banned,
+                                             Integer minExperience,
+                                             Integer maxExperience,
+                                             Integer minLevel,
+                                             Integer maxLevel,
+                                             PlayerOrder order,
+                                             Integer pageNumber,
+                                             Integer pageSize) {
+        return services.getAllWithoutFilters(
+                name,
+                title,
+                race,
+                profession,
+                after,
+                before,
+                banned,
+                minExperience,
+                maxExperience,
+                minLevel,
+                maxLevel,
+                order,
+                pageNumber,
+                pageSize);
     }
 
     @PostMapping("/{id}")
